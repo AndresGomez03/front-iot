@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -18,29 +19,25 @@ export default function Home() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await fetchTemperaturas();
-      setDatos(data);
+      try {
+        const data = await fetchTemperaturas(); // data es un array con 1 elemento
 
-      // Asegurarse de que hay datos antes de leerlos
-      if (data && data.length > 0) {
-        // Obtener el valor de la última lectura de temperatura
-        const ultimaTemperatura = data[data.length - 1];
-        
-        // Activar la alerta si el último valor es > 50, desactivarla en caso contrario
-        if (ultimaTemperatura.valor > 50) {
-          setAlertaActiva(true);
-        } else {
-          setAlertaActiva(false);
-        }
+        // Acumula el nuevo dato al historial
+        setDatos(prev => [...prev, ...data]);
+
+        // Verifica la última temperatura para la alerta
+        const ultima = data[data.length - 1];
+        setAlertaActiva(ultima.valor > 50);
+      } catch (error) {
+        console.error("Error al obtener datos del ESP8266:", error);
       }
     };
 
-    fetchData(); // Llama una vez al cargar
-    const interval = setInterval(fetchData, 5000); // Y luego configura el intervalo
+    fetchData(); // Llamada inicial
+    const interval = setInterval(fetchData, 5000); // Cada 5 segundos
 
-    // Limpia el intervalo cuando el componente se desmonta
-    return () => clearInterval(interval);
-  }, []); // El array de dependencias vacío asegura que esto se ejecute solo una vez
+    return () => clearInterval(interval); // Limpieza al desmontar
+  }, []);
 
   return (
     <main className="min-h-screen bg-gray-100 p-6">
@@ -55,3 +52,4 @@ export default function Home() {
     </main>
   );
 }
+
