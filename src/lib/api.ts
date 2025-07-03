@@ -1,16 +1,17 @@
 import axios from "axios";
 
-const API_BASE = "http://localhost:8080"; // Cambia esto si vas a producción
+interface Temperatura {
+  valor: number;
+  timestamp: string;
+  alerta?: string;
+}
 
-export async function fetchTemperaturas(): Promise<{ valor: number; timestamp: string; alerta: boolean }[]> {
-  const res = await axios.get(`${API_BASE}/temperatura`);
-  if (!res.ok) throw new Error("Error al obtener temperatura");
-
-  const data = await res.json();
+export async function fetchTemperaturaESP(): Promise<Temperatura> {
+  const res = await axios.get("http://esp...");
 
   return {
     valor: res.data.valor,
     timestamp: new Date().toISOString(), // 🔥 timestamp generado en el frontend
-    alerta: res.data.valor
+    alerta: res.data.alerta,           // opcional, solo para mostrarlo
   };
 }
