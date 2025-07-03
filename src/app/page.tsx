@@ -9,6 +9,7 @@ import { AlertaTemperatura } from "@/components/AlertaTemperatura";
 type Temperatura = {
   valor: number;
   timestamp: string;
+  alerta: boolean;
 };
 
 export default function Home() {
